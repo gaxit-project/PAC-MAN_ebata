@@ -14,6 +14,8 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        transform.position = new Vector3(transform.position.x, transform.position.y, 0.4f);
+
         if (Input.GetKey(KeyCode.UpArrow))
         {
             rigidbody.velocity = transform.up * playerSpeed * Time.deltaTime;
@@ -55,6 +57,14 @@ public class PlayerController : MonoBehaviour
             WarpPosition_1.SetActive(true);
             WarpPosition_2.SetActive(true);
             Debug.Log("ワープポイントが回復");
+        }
+        else if(other.CompareTag("Cookie"))
+        {
+            Debug.Log("クッキーを食べた");
+        }
+        else if(other.CompareTag("PowerCookie"))
+        {
+            Debug.Log("パワークッキーを食べた");
         }
         else
         {
