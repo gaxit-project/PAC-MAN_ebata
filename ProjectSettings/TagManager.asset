@@ -3,7 +3,15 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Cookie
+  - PowerCookie
+  - Ghost
+  - WarpPoint_1
+  - WarpPoint_2
+  - WarpPoint_3
+  - WarpPoint_4
+  - Recover
   layers:
   - Default
   - TransparentFX
