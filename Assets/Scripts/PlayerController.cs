@@ -10,27 +10,34 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject WarpPosition_1;
     [SerializeField] private GameObject WarpPosition_2;
     private GameObject WarpPosition;
+    private bool gameClear;
 
     // Update is called once per frame
     void Update()
     {
         transform.position = new Vector3(transform.position.x, transform.position.y, 0.4f);
+        gameClear = GameController.isCleared;
 
-        if (Input.GetKey(KeyCode.UpArrow))
+        if (Input.GetKey(KeyCode.UpArrow) && !gameClear)
         {
             rigidbody.velocity = transform.up * playerSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.DownArrow))
+        if (Input.GetKey(KeyCode.DownArrow) && !gameClear)
         {
             rigidbody.velocity = -transform.up * playerSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.RightArrow))
+        if (Input.GetKey(KeyCode.RightArrow) && !gameClear)
         {
             rigidbody.velocity = transform.right * playerSpeed * Time.deltaTime;
         }
-        if (Input.GetKey(KeyCode.LeftArrow))
+        if (Input.GetKey(KeyCode.LeftArrow) && !gameClear)
         {
             rigidbody.velocity = -transform.right * playerSpeed * Time.deltaTime;
+        }
+
+        if(gameClear)
+        {
+            rigidbody.velocity = Vector3.zero;
         }
     }
 
@@ -60,10 +67,12 @@ public class PlayerController : MonoBehaviour
         }
         else if(other.CompareTag("Cookie"))
         {
-            Debug.Log("クッキーを食べた");
+            other.GetComponent<CookieController>().EatCookie();
+            //Debug.Log("クッキーを食べた");
         }
         else if(other.CompareTag("PowerCookie"))
         {
+            other.GetComponent<PowerCookieController>().EatPowerCookie();
             Debug.Log("パワークッキーを食べた");
         }
         else

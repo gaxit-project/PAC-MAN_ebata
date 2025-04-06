@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 1220385322043992142}
   - component: {fileID: 1168473744268665022}
   - component: {fileID: 1543874990995944164}
+  - component: {fileID: 3531207482663154042}
   m_Layer: 0
   m_Name: Cookie
   m_TagString: Cookie
@@ -105,3 +106,15 @@ SphereCollider:
   serializedVersion: 3
   m_Radius: 0.5
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &3531207482663154042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 897896734640179478}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0583da3b6e382bb449ea3faeb89a355d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
