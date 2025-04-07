@@ -34,4 +34,9 @@ public class ScoreController : MonoBehaviour
     {
         score += plusScore;
     }
+
+    public void InitializeScore()
+    {
+        score = 0;
+    }
 }
