@@ -8,7 +8,7 @@ public class ScoreController : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI scoreUI;
     [SerializeField] private TextMeshProUGUI highScoreUI;
-    private int score = 0;
+    public int score = 0;
     private int highScore = 0;
 
     // Start is called before the first frame update
@@ -33,6 +33,10 @@ public class ScoreController : MonoBehaviour
     public void addScore(int plusScore)
     {
         score += plusScore;
+        if(score % 10000 == 0 && score > 0)
+        {
+            FindObjectOfType<GameController>().addLife();
+        }
     }
 
     public void InitializeScore()

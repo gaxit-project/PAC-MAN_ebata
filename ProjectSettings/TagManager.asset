@@ -25,6 +25,8 @@ TagManager:
   - Point11
   - Point12
   - Wall
+  - WarpPoint_5
+  - WarpPoint_6
   layers:
   - Default
   - TransparentFX

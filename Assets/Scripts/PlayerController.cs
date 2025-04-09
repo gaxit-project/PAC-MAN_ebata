@@ -88,6 +88,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    public void InitializePlayerMove()
+    {
+        canMoveUp = false;
+        canMoveDown = false;
+        canMoveLeft = true;
+        canMoveRight = true;
+        isMovingUp = false;
+        isMovingDown = false;
+        isMovingLeft = true;
+        isMovingRight = false;
+    }
+
     void OnTriggerEnter(Collider other)
     {
         if(other.CompareTag("WarpPoint_1") || other.CompareTag("WarpPoint_3"))
@@ -110,7 +122,7 @@ public class PlayerController : MonoBehaviour
         {
             WarpPosition_1.SetActive(true);
             WarpPosition_2.SetActive(true);
-            Debug.Log("ワープポイントが回復");
+            Debug.Log("プレイヤー用のワープポイントが回復");
         }
         else if(other.CompareTag("Cookie"))
         {
@@ -237,10 +249,6 @@ public class PlayerController : MonoBehaviour
         else if(other.CompareTag("Ghost"))
         {
             FindObjectOfType<GameController>().Miss();
-        }
-        else
-        {
-            Debug.LogError("タグが設定されていません！");
         }
     }
 }

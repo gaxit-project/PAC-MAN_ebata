@@ -6,19 +6,22 @@ public class BlinkyController : MonoBehaviour
 {
     private float speed;
 
+    [SerializeField] private GameObject WarpPosition_5;
+    [SerializeField] private GameObject WarpPosition_6;
+    private GameObject WarpPosition;
     [SerializeField] private Material[] mat = new Material[3];
     [SerializeField] private GameObject[] scanners = new GameObject[4];
     private float[] distances = new float[3];
     private Vector3 targetPosition;
     private bool canMove = false;
-    private bool isMovingUp = false;
-    private bool isMovingDown = false;
-    private bool isMovingLeft = true;
-    private bool isMovingRight = false;
     private bool canMoveUp = false;
     private bool canMoveDown = false;
     private bool canMoveLeft = true;
     private bool canMoveRight = true;
+    private bool isMovingUp = false;
+    private bool isMovingDown = false;
+    private bool isMovingLeft = true;
+    private bool isMovingRight = false;
     private float moveAxis_x = 10.6f; //横移動(y座標)
     private float moveAxis_y = 0f; //縦移動(x座標)
 
@@ -26,7 +29,6 @@ public class BlinkyController : MonoBehaviour
     void Start()
     {
         speed = GameController.ghostSpeed;
-        //int rnd = Random.Range(1, 11);
     }
 
     // Update is called once per frame
@@ -60,8 +62,44 @@ public class BlinkyController : MonoBehaviour
         }
     }
 
+    public void InitializeBlinkyMove()
+    {
+        canMoveUp = false;
+        canMoveDown = false;
+        canMoveLeft = true;
+        canMoveRight = true;
+        isMovingUp = false;
+        isMovingDown = false;
+        isMovingLeft = true;
+        isMovingRight = false;
+    }
+
     void OnTriggerEnter(Collider other)
     {
+
+        if(other.CompareTag("WarpPoint_5"))
+        {
+            WarpPosition = WarpPosition_6;
+            WarpPosition_6.SetActive(false);
+            WarpPosition_5.SetActive(true);
+            transform.position = WarpPosition.transform.position;
+            Debug.Log("Blinky 右にワープ");
+        }
+        else if(other.CompareTag("WarpPoint_6"))
+        {
+            WarpPosition = WarpPosition_5;
+            WarpPosition_5.SetActive(false);
+            WarpPosition_6.SetActive(true);
+            transform.position = WarpPosition.transform.position;
+            Debug.Log("Blinky 左にワープ");
+        }
+        else if(other.CompareTag("Recover"))
+        {
+            WarpPosition_5.SetActive(true);
+            WarpPosition_6.SetActive(true);
+            Debug.Log("Blinky用のワープポイントが回復");
+        }
+
         if(other.CompareTag("Point1") || other.CompareTag("Point2") || other.CompareTag("Point3") || other.CompareTag("Point4") || other.CompareTag("Point5") || other.CompareTag("Point6") || other.CompareTag("Point7") || other.CompareTag("Point8") || other.CompareTag("Point9") || other.CompareTag("Point12"))
         {
             targetPosition = PlayerController.currentPlayerPosition;
@@ -436,23 +474,23 @@ public class BlinkyController : MonoBehaviour
                 isMovingDown = true;
             }
         }
-        // else if(other.CompareTag("Point10"))
-        // {
-        //    moveAxis_x = other.transform.position.y;
-        //    moveAxis_y = other.transform.position.x;
-        //    canMoveUp = true;
-        //    canMoveDown = true;
-        //    canMoveLeft = false;
-        //    canMoveRight = false;
-        // }
-        // else if(other.CompareTag("Point11"))
-        // {
-        //    moveAxis_x = other.transform.position.y;
-        //    moveAxis_y = other.transform.position.x;
-        //    canMoveUp = false;
-        //    canMoveDown = false;
-        //    canMoveLeft = true;
-        //    canMoveRight = true;
-        // }
+        else if(other.CompareTag("Point10"))
+        {
+           moveAxis_x = other.transform.position.y;
+           moveAxis_y = other.transform.position.x;
+           canMoveUp = true;
+           canMoveDown = true;
+           canMoveLeft = false;
+           canMoveRight = false;
+        }
+        else if(other.CompareTag("Point11"))
+        {
+           moveAxis_x = other.transform.position.y;
+           moveAxis_y = other.transform.position.x;
+           canMoveUp = false;
+           canMoveDown = false;
+           canMoveLeft = true;
+           canMoveRight = true;
+        }
     }
 }
