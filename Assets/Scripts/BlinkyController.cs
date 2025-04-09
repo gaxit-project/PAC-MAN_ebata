@@ -164,6 +164,20 @@ public class BlinkyController : MonoBehaviour
             canMoveDown = true;
             canMoveLeft = true;
             canMoveRight = true;
+            if(isMovingUp)
+            {
+                isMovingUp = false;
+                distances[0] = (scanners[2].transform.position - targetPosition).sqrMagnitude;
+                distances[1] = (scanners[3].transform.position - targetPosition).sqrMagnitude;
+                if(distances[0] <= distances[1])
+                {
+                    isMovingLeft = true;
+                }
+                else
+                {
+                    isMovingRight = true;
+                }
+            }
             if(isMovingLeft)
             {
                 distances[0] = (scanners[1].transform.position - targetPosition).sqrMagnitude;
@@ -229,6 +243,20 @@ public class BlinkyController : MonoBehaviour
                     isMovingLeft = true;
                 }
             }
+            if(isMovingRight)
+            {
+                isMovingRight = false;
+                distances[0] = (scanners[0].transform.position - targetPosition).sqrMagnitude;
+                distances[1] = (scanners[1].transform.position - targetPosition).sqrMagnitude;
+                if(distances[0] <= distances[1])
+                {
+                    isMovingUp = true;
+                }
+                else
+                {
+                    isMovingDown = true;
+                }
+            }
         }
         else if(other.CompareTag("Point4"))
         {
@@ -238,6 +266,20 @@ public class BlinkyController : MonoBehaviour
             canMoveDown = false;
             canMoveLeft = true;
             canMoveRight = true;
+            if(isMovingDown)
+            {
+                isMovingDown = false;
+                distances[0] = (scanners[2].transform.position - targetPosition).sqrMagnitude;
+                distances[1] = (scanners[3].transform.position - targetPosition).sqrMagnitude;
+                if(distances[0] <= distances[1])
+                {
+                    isMovingLeft = true;
+                }
+                else
+                {
+                    isMovingRight = true;
+                }
+            }
             if(isMovingLeft)
             {
                 distances[0] = (scanners[0].transform.position - targetPosition).sqrMagnitude;
@@ -301,6 +343,20 @@ public class BlinkyController : MonoBehaviour
                 {
                     isMovingDown = false;
                     isMovingRight = true;
+                }
+            }
+            if(isMovingLeft)
+            {
+                isMovingLeft = false;
+                distances[0] = (scanners[0].transform.position - targetPosition).sqrMagnitude;
+                distances[1] = (scanners[1].transform.position - targetPosition).sqrMagnitude;
+                if(distances[0] <= distances[1])
+                {
+                    isMovingUp = true;
+                }
+                else
+                {
+                    isMovingDown = true;
                 }
             }
         }
@@ -380,23 +436,23 @@ public class BlinkyController : MonoBehaviour
                 isMovingDown = true;
             }
         }
-        else if(other.CompareTag("Point10"))
-        {
-            moveAxis_x = other.transform.position.y;
-            moveAxis_y = other.transform.position.x;
-            canMoveUp = true;
-            canMoveDown = true;
-            canMoveLeft = false;
-            canMoveRight = false;
-        }
-        else if(other.CompareTag("Point11"))
-        {
-            moveAxis_x = other.transform.position.y;
-            moveAxis_y = other.transform.position.x;
-            canMoveUp = false;
-            canMoveDown = false;
-            canMoveLeft = true;
-            canMoveRight = true;
-        }
+        // else if(other.CompareTag("Point10"))
+        // {
+        //    moveAxis_x = other.transform.position.y;
+        //    moveAxis_y = other.transform.position.x;
+        //    canMoveUp = true;
+        //    canMoveDown = true;
+        //    canMoveLeft = false;
+        //    canMoveRight = false;
+        // }
+        // else if(other.CompareTag("Point11"))
+        // {
+        //    moveAxis_x = other.transform.position.y;
+        //    moveAxis_y = other.transform.position.x;
+        //    canMoveUp = false;
+        //    canMoveDown = false;
+        //    canMoveLeft = true;
+        //    canMoveRight = true;
+        // }
     }
 }
