@@ -30,5 +30,10 @@ public class OtherKeysController : MonoBehaviour
                 child.gameObject.SetActive(false);
             }
         }
+
+        if(Input.GetKeyDown(KeyCode.K))
+        {
+            FindObjectOfType<PlayerController>().Miss();
+        }
     }
 }

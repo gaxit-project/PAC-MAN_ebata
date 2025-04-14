@@ -18,6 +18,7 @@ public class CookieController : MonoBehaviour
 
     public void EatCookie()
     {
+        FindObjectOfType<AudioManager>().PlaySound(0);
         FindObjectOfType<ScoreController>().addScore(10);
         this.gameObject.SetActive(false);
     }

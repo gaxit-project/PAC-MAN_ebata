@@ -27,6 +27,14 @@ TagManager:
   - Wall
   - WarpPoint_5
   - WarpPoint_6
+  - Decelerator
+  - WarpPoint_7
+  - WarpPoint_8
+  - WarpPoint_9
+  - WarpPoint_10
+  - WarpPoint_11
+  - WarpPoint_12
+  - Restart
   layers:
   - Default
   - TransparentFX

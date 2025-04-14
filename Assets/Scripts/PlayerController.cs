@@ -1,37 +1,49 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Threading.Tasks;
+using Unity.VisualScripting;
 
 public class PlayerController : MonoBehaviour
 {
     public float playerSpeed = 1.05f; //プレイヤーの動く速さ
 
     [SerializeField] private new Rigidbody rigidbody; //プレイヤーのregidbodyを入れる
+    [SerializeField] private Animator PlayerAnim; //プレイヤーのアニメーターを入れる
+    //WarpPointの座標取得とOn/Off切り替え用
     [SerializeField] private GameObject WarpPosition_1;
     [SerializeField] private GameObject WarpPosition_2;
-    private GameObject WarpPosition;
-    private bool gameClear;
+    private GameObject WarpPosition; //ワープ先の座標
+    private bool gameClear; //すべてのクッキーを取ったかどうか
+    //動く方向を管理する用
+    //その方向に動くことが出来るかどうか
     private bool canMoveUp = false;
     private bool canMoveDown = false;
     private bool canMoveLeft = true;
     private bool canMoveRight = true;
+    //今どの方向に移動しているか
     private bool isMovingUp = false;
     private bool isMovingDown = false;
     private bool isMovingLeft = true;
     private bool isMovingRight = false;
+    private bool canEatGhost; //ゴーストを食べられるかどうか
     private float moveAxis_x = 8.8f; //横移動(y座標)
     private float moveAxis_y = 0f; //縦移動(x座標)
-    public static Vector3 currentPlayerPosition;
+    public static Vector3 currentPlayerPosition; //最後に触れたPointの座標
 
-    private bool canMove;
+    private bool canMove; //プレイヤーが動けるかどうか
 
     // Update is called once per frame
     void Update()
     {
+        //z軸がズレないようにする
         transform.position = new Vector3(transform.position.x, transform.position.y, 0.4f);
+        //GameControllerから取得
         gameClear = GameController.isCleared;
         canMove = GameController.canPlayerMove;
+        canEatGhost = GameController.canEatGhost;
 
+        //プレイヤーの動きを制御する(入力した方向に動けるかを確認してからその方向のみに動くようにする)
         if ((Input.GetKey(KeyCode.UpArrow) || Input.GetKey(KeyCode.W)) && !gameClear && canMoveUp)
         {
             isMovingUp = true;
@@ -61,34 +73,43 @@ public class PlayerController : MonoBehaviour
             isMovingRight = false;
         }
 
+        //プレイヤーの座標を管理する(動ける場合のみ軸に合わせて動く)
         if (isMovingUp && canMoveUp && canMove && !gameClear)
         {
+            PlayerAnim.Play("Player_Up");
             transform.position = new Vector3(moveAxis_y, transform.position.y, 0.4f);
             transform.position += transform.up * playerSpeed * Time.deltaTime;
         }
         if (isMovingDown && canMoveDown && canMove && !gameClear)
         {
+            PlayerAnim.Play("Player_Down");
             transform.position = new Vector3(moveAxis_y, transform.position.y, 0.4f);
             transform.position += -transform.up * playerSpeed * Time.deltaTime;
         }
         if (isMovingLeft && canMoveLeft && canMove && !gameClear)
         {
+            PlayerAnim.Play("Player_Left");
             transform.position = new Vector3(transform.position.x, moveAxis_x, 0.4f);
             transform.position += -transform.right * playerSpeed * Time.deltaTime;
         }
         if (isMovingRight && canMoveRight && canMove && !gameClear)
         {
+            PlayerAnim.Play("Player_Right");
             transform.position = new Vector3(transform.position.x, moveAxis_x, 0.4f);
             transform.position += transform.right * playerSpeed * Time.deltaTime;
         }
 
-        if(gameClear)
+        if ((GetComponent<Rigidbody>().IsSleeping()) && canMove)
         {
-            rigidbody.velocity = Vector3.zero;
+            PlayerAnim.speed = 0;
+        }
+        else if (canMove)
+        {
+            PlayerAnim.speed = 1;
         }
     }
 
-    public void InitializePlayerMove()
+    public void InitializePlayerMove() //動きを制御するbool変数の初期化
     {
         canMoveUp = false;
         canMoveDown = false;
@@ -100,8 +121,17 @@ public class PlayerController : MonoBehaviour
         isMovingRight = false;
     }
 
-    void OnTriggerEnter(Collider other)
+    public void StopPlayerAnimation() //アニメーションを停止させる
     {
+        if (!canMove)
+        {
+            PlayerAnim.speed = 0;
+        }
+    }
+
+    void OnTriggerEnter(Collider other) //何かしらに触れた際に処理を行う
+    {
+        //ワープ関係
         if(other.CompareTag("WarpPoint_1") || other.CompareTag("WarpPoint_3"))
         {
             WarpPosition = WarpPosition_2;
@@ -124,6 +154,7 @@ public class PlayerController : MonoBehaviour
             WarpPosition_2.SetActive(true);
             Debug.Log("プレイヤー用のワープポイントが回復");
         }
+        //クッキー関係
         else if(other.CompareTag("Cookie"))
         {
             other.GetComponent<CookieController>().EatCookie();
@@ -134,10 +165,12 @@ public class PlayerController : MonoBehaviour
             other.GetComponent<PowerCookieController>().EatPowerCookie();
             Debug.Log("パワークッキーを食べた");
         }
+        //プレイヤーの動き関係
         else if(other.CompareTag("Point1"))
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = true;
             canMoveLeft = true;
@@ -148,6 +181,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = false;
             canMoveDown = true;
             canMoveLeft = true;
@@ -158,6 +192,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = true;
             canMoveLeft = true;
@@ -168,6 +203,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = false;
             canMoveLeft = true;
@@ -178,6 +214,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = true;
             canMoveLeft = false;
@@ -188,6 +225,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = false;
             canMoveLeft = false;
@@ -198,6 +236,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = false;
             canMoveDown = true;
             canMoveLeft = false;
@@ -208,6 +247,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = true;
             canMoveDown = false;
             canMoveLeft = true;
@@ -218,6 +258,7 @@ public class PlayerController : MonoBehaviour
         {
             moveAxis_x = other.transform.position.y;
             moveAxis_y = other.transform.position.x;
+            transform.position = new Vector3(moveAxis_y, moveAxis_x, 0.4f);
             canMoveUp = false;
             canMoveDown = true;
             canMoveLeft = true;
@@ -246,9 +287,43 @@ public class PlayerController : MonoBehaviour
         {
             currentPlayerPosition = other.transform.position;
         }
+        //ゴースト
         else if(other.CompareTag("Ghost"))
         {
-            FindObjectOfType<GameController>().Miss();
+            if(!canEatGhost)
+            {
+                Invoke("Miss", 0f);
+            }
+            else
+            {
+                string ghostName = other.gameObject.name;
+                if(ghostName == "Blinky")
+                {
+                    FindObjectOfType<BlinkyController>().Eated();
+                }
+                else if(ghostName == "Pinky")
+                {
+                    FindObjectOfType<PinkyController>().Eated();
+                }
+                else if(ghostName == "Inky")
+                {
+                    //FindObjectOfType<InkyController>().Eated();
+                }
+                else if(ghostName == "Clyde")
+                {
+                    //FindObjectOfType<ClydeController>().Eated();
+                }
+            }
         }
+    }
+
+    public async void Miss()
+    {
+        PlayerAnim.speed = 0;
+        FindObjectOfType<GameController>().Miss();
+        await Task.Delay(1000);
+        PlayerAnim.speed = 1;
+        PlayerAnim.Play("Player_Miss");
+        FindObjectOfType<AudioManager>().PlaySound(4);
     }
 }
